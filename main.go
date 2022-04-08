@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/gorilla/mux"
-	"github.com/pkg/browser"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -30,7 +29,7 @@ func main() {
 		}
 		proxy.ServeHTTP(w, r)
 	}
-	staticRemote, _ := url.Parse("https://f1vp.netlify.app/")
+	staticRemote, _ := url.Parse("http://f1-web-viewer:3000/")
 	staticProxy := httputil.NewSingleHostReverseProxy(staticRemote)
 	staticHandler := func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%s FE* - %s\n", r.RemoteAddr, r.URL.String())
@@ -38,7 +37,7 @@ func main() {
 		staticProxy.ServeHTTP(w, r)
 	}
 
-	fnRemote, _ := url.Parse("https://fwv-us.deta.dev/")
+	fnRemote, _ := url.Parse("http://f1-web-viewer:3000/")
 	fnProxy := httputil.NewSingleHostReverseProxy(fnRemote)
 	fnHandler := func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%s BE* - %s\n", r.RemoteAddr, r.URL.String())
@@ -53,7 +52,7 @@ func main() {
 	r.PathPrefix("/").HandlerFunc(staticHandler)
 	r.SkipClean(true)
 
-	_ = browser.OpenURL("http://localhost:13331/")
+	//_ = browser.OpenURL("http://localhost:13331/")
 	log.Printf("Reverse Proxy Server running at :13331\n")
 	http.Handle("/", r)
 	panic(http.ListenAndServe(":13331", r))
